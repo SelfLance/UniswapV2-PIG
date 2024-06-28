@@ -1,0 +1,75 @@
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+console.log("Private Key: ", process.env.PRIVATE_KEY);
+// return;
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  // solidity: "0.8.24",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.24",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        version: "0.8.0",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+    ],
+  },
+  networks: {
+    hardhat: {
+      // Local Hardhat network
+    },
+    ethereum: {
+      url: process.env.INFURA_PROJECT_ID, // Infura URL for Ethereum mainnet
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    bsc: {
+      url: "https://bsc-dataseed.binance.org/", // BSC mainnet URL
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    bsc_test: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/", // BSC Testnet URL
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    kbc: {
+      url: "https://YOUR_KBC_CHAIN_RPC_URL", // Replace with actual KBC chain RPC URL
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    spoila_eth: {
+      url: process.env.SEPOILA_TESTNET_RPC, // Infura URL for Rinkeby testnet
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    spoila_base: {
+      url: process.env.SEPOILA_TESTNET_RPC, // Infura URL for Rinkeby testnet
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    shasta: {
+      url: "https://api.shasta.trongrid.io",
+      privateKey: process.env.PRIVATE_KEY,
+    },
+    mainnet: {
+      url: "https://api.trongrid.io",
+      privateKey: process.env.PRIVATE_KEY,
+    },
+    polygon_mainnet: {
+      url: "https://polygon-mainnet.infura.io/v3/2Ekv5d5TFWaSnW39HgEAbWa0ZO9",
+      accounts: [process.env.PRIVATE_KEY],
+    },
+  },
+  etherscan: {
+    apiKey: process.env.ETH_API_KEY,
+  },
+};
