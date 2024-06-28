@@ -1,7 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
-console.log("Private Key: ", process.env.PRIVATE_KEY);
-// return;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -65,7 +63,7 @@ module.exports = {
       privateKey: process.env.PRIVATE_KEY,
     },
     polygon_mainnet: {
-      url: "https://polygon-mainnet.infura.io/v3/2Ekv5d5TFWaSnW39HgEAbWa0ZO9",
+      url: `https://polygon-mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
       accounts: [process.env.PRIVATE_KEY],
     },
   },
