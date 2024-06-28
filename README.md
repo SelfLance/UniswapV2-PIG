@@ -21,11 +21,10 @@ Factory deployed to: 0x3e1b575f30B1F767f60A253efe981a5C8e1130C8  https://testnet
 Router deployed to: 0xE05218138c5dD932C8d80141Fe62833d9893fE33   https://testnet.bscscan.com/address/0xE05218138c5dD932C8d80141Fe62833d9893fE33#code
 
 # Deployed on Fuji Network
-WETH deployed to: 0xc0eC3aD43a751a7bd3f280dACf819118fFaf543F  https://avalanche.testnet.localhost:8080/address/0xc0eC3aD43a751a7bd3f280dACf819118fFaf543F#code
-
-Token deployed to: 0x6ea632724e0f3c3aD13f2c28b14B48f1D88B5Fcd
-Factory deployed to: 0xc0eC3aD43a751a7bd3f280dACf819118fFaf543F
-Router deployed to: 0xeE55C3116C99169a4ca7501e43e3303116a33d91
+WETH deployed to: 0xd39497DB12d9E284b92e4DDEAC97f6D4d1fCd9af
+Token deployed to: 0x4c120BF1e8A6085805fB2ce279eA7DB75b27b888
+Factory deployed to: 0xB1AEEf80e9A26FCd1321582D2AA38CFA12b833c9
+Router deployed to: 0xbf8AbdA127eE5876a7e25B26600E63ac51845100
 
 
 

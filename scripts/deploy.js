@@ -3,7 +3,7 @@ const hre = require("hardhat");
 async function main() {
   // Get the contract factories
   //   const [deployer] = await hre.ethers.getSigners();
-  let deployer = "0x1640fc5781B960400b9B0cAE7Cd72b21B2E246e7";
+  let deployer = "0x270D251FAD622758e82147C7a103168c869d7996";
   const WETH = await hre.ethers.getContractFactory("MockWETH");
   const Token = await hre.ethers.getContractFactory("DancingPig");
   const UniswapV2Factory = await hre.ethers.getContractFactory(
@@ -34,13 +34,13 @@ async function main() {
 
   // Initialize the token contract with the router address
   //   await token.initialize(router.address);
-  let thousand = "1000000000000000000000";
-  let hundred = "100000000000000000000";
+  //   let thousand = "1000000000000000000000";
+  //   let hundred = "100000000000000000000";
 
   // Fund the contracts
-  await token.transfer(token.target, thousand);
-  await weth.deposit({ value: hundred });
-  await weth.transfer(token.target, hundred);
+  //   await token.transfer(token.target, thousand);
+  //   await weth.deposit({ value: hundred });
+  //   await weth.transfer(token.target, hundred);
 }
 
 main().catch((error) => {
