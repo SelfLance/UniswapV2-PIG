@@ -21,10 +21,10 @@ Factory deployed to: 0x3e1b575f30B1F767f60A253efe981a5C8e1130C8  https://testnet
 Router deployed to: 0xE05218138c5dD932C8d80141Fe62833d9893fE33   https://testnet.bscscan.com/address/0xE05218138c5dD932C8d80141Fe62833d9893fE33#code
 
 # Deployed on Fuji Network
-WETH deployed to: 0xd39497DB12d9E284b92e4DDEAC97f6D4d1fCd9af
-Token deployed to: 0x4c120BF1e8A6085805fB2ce279eA7DB75b27b888
-Factory deployed to: 0xB1AEEf80e9A26FCd1321582D2AA38CFA12b833c9
-Router deployed to: 0xbf8AbdA127eE5876a7e25B26600E63ac51845100
+WETH deployed to: https://testnet.snowtrace.io/token/0xac388e3b7a90ff8A956d2df6Dda9420Fc8278742/contract/code
+Token deployed to: https://testnet.snowtrace.io/token/0xAA92Cde478Cf0B6f70001E31fdcedbE251f19936/contract/code
+Factory deployed to: https://testnet.snowtrace.io/token/0x7Cc9222E08cD5299a3FC3b3aC833cd3c76B5B8Cc/contract/code
+Router deployed to: https://testnet.snowtrace.io/token/0xE649933D24b9174595eAfA038F711a7D1c1b066b/contract/code
 
 
 
