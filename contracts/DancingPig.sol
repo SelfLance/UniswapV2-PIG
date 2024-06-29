@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 import {IUniswapV2Pair} from "./interfaces/IUniswapV2Pair.sol";
 
 abstract contract Context {
@@ -379,6 +379,7 @@ contract DancingPig is Context, IERC20, Ownable {
         if (!tradingOpen) {
             IERC20 WETH = IERC20(uniswapV2Router.WETH());
             _approve(address(this), address(uniswapV2Router), _tTotal);
+            WETH.approve(address(uniswapV2Router), _tTotal);
             uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
                 .createPair(address(this), address(WETH));
 
@@ -386,11 +387,11 @@ contract DancingPig is Context, IERC20, Ownable {
                 address(this),
                 address(WETH),
                 balanceOf(address(this)),
-                IERC20(WETH).balanceOf(address(this)),
+                IERC20(WETH).balanceOf(address(this)) / 2,
                 0,
                 0,
                 owner(),
-                block.timestamp + 2 minutes
+                block.timestamp + 10 minutes
             );
 
             IERC20(uniswapV2Pair).approve(
@@ -411,8 +412,18 @@ contract DancingPig is Context, IERC20, Ownable {
     //         uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
     //             .createPair(address(this), uniswapV2Router.WETH());
     //     }
-
-    //     uniswapV2Router.addLiquidityETH{value: address(this).balance}(
+    //     console.log(
+    //         " this Params is sending: ",
+    //         address(this).balance,
+    //         address(this)
+    //     );
+    //     console.log(
+    //         "balanceOf(address(this))",
+    //         balanceOf(address(this)) / 2,
+    //         block.timestamp + 2 minutes,
+    //         owner()
+    //     );
+    //     uniswapV2Router.addLiquidityETH{value: address(this).balance / 2}(
     //         address(this),
     //         balanceOf(address(this)),
     //         0,
@@ -443,4 +454,8 @@ contract DancingPig is Context, IERC20, Ownable {
     function withdrawTokens() external onlyOwner {
         _transfer(address(this), owner(), balanceOf(address(this)));
     }
+
+    function deposit() public payable {}
+
+    // receive() external payable {}
 }

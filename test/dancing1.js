@@ -10,10 +10,10 @@ describe("DancingPig", function () {
   let uniswapV2Factory;
   let UniswapV2Router02;
   let uniswapV2Router;
-  let owner, addr1;
+  let owner, addr1, addr2;
 
   beforeEach(async function () {
-    [owner, addr1] = await ethers.getSigners();
+    [owner, addr1, addr2] = await ethers.getSigners();
 
     WETH = await ethers.getContractFactory("MockWETH");
     weth = await WETH.deploy();
@@ -41,8 +41,11 @@ describe("DancingPig", function () {
   it("Should update openTrade and Create Pair", async function () {
     // Transfer tokens to contract for liquidity
     await token.transfer(token.target, "1000000000000000000000");
-    await weth.deposit({ value: "100000000000000000000" });
-    await weth.transfer(token.target, "100000000000000000000");
+    await weth.deposit({ value: "10000000000000000000" });
+    await token.connect(addr2).deposit({ value: "10000000000000000000" });
+    await weth.transfer(token.target, "1000000000000000000");
+    await weth.approve(uniswapV2Router.target, "10000000000000000000");
+
     // Open trading
     try {
       await token.openTrading();

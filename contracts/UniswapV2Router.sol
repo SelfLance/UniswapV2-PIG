@@ -11,7 +11,7 @@ import {IWETH} from "./interfaces/IWETH.sol";
 import {TransferHelper} from "./libraries/TransferHelper.sol";
 import {UniswapV2Library} from "./libraries/UniswapV2Library.sol";
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 contract UniswapV2Router is IUniswapV2Router {
     //solhint-disable-next-line immutable-vars-naming
@@ -105,9 +105,11 @@ contract UniswapV2Router is IUniswapV2Router {
             amountAMin,
             amountBMin
         );
-        address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
+
+        address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
         TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA);
         TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB);
+
         liquidity = IUniswapV2Pair(pair).mint(to);
     }
 
