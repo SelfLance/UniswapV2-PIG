@@ -294,6 +294,7 @@ contract DancingPig is Context, IERC20, Ownable {
             amount <= _maxTxAmount,
             "Transfer amount exceeds the maxTxAmount."
         );
+
         if (
             from != owner() &&
             to != owner() &&

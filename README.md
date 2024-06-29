@@ -26,6 +26,13 @@ Token deployed to: https://testnet.snowtrace.io/token/0xAA92Cde478Cf0B6f70001E31
 Factory deployed to: https://testnet.snowtrace.io/token/0x7Cc9222E08cD5299a3FC3b3aC833cd3c76B5B8Cc/contract/code
 Router deployed to: https://testnet.snowtrace.io/token/0xE649933D24b9174595eAfA038F711a7D1c1b066b/contract/code
 
+# Fixed Issue Contract on Fuji Avalaunche
+WETH deployed to: https://testnet.snowtrace.io/token/0x4cfFcc7B4A7948EB7A10b610E913F332664fDcd0/contract/code
+Token deployed to: https://testnet.snowtrace.io/token/0xD245e47BE334f324A39f17007fAa7Bd10Dc6a6E4/contract/code
+Factory deployed to: https://testnet.snowtrace.io/token/0x9D91FBDd5467fE982e62Fda1A5c85293673BAd81/contract/code
+Router deployed to: https://testnet.snowtrace.io/token/0xE7C6301109bBc3C75127c6EDaFE78CcF822D81AE/contract/code
+
+
 
 
 

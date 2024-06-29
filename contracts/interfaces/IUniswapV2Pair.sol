@@ -59,4 +59,6 @@ interface IUniswapV2Pair is IUniswapV2ERC20 {
     function sync() external;
 
     function initialize(address, address) external;
+
+    // function balanceOf(address owner) external view returns (uint256);
 }

@@ -41,10 +41,10 @@ describe("DancingPig", function () {
   it("Should update openTrade and Create Pair", async function () {
     // Transfer tokens to contract for liquidity
     await token.transfer(token.target, "1000000000000000000000");
-    await weth.deposit({ value: "10000000000000000000" });
-    await token.connect(addr2).deposit({ value: "10000000000000000000" });
+    // await weth.deposit({ value: "10000000000000000000" });
+    // await token.connect(addr2).deposit({ value: "10000000000000000000" });
     await weth.transfer(token.target, "1000000000000000000");
-    await weth.approve(uniswapV2Router.target, "10000000000000000000");
+    // await weth.approve(uniswapV2Router.target, "10000000000000000000");
 
     // Open trading
     try {
@@ -53,7 +53,93 @@ describe("DancingPig", function () {
       console.error("openTrading error:", error);
       throw error;
     }
-    // Check if trading is open
-    // expect(await token.tradingOpen()).to.be.true;
+    let pairAddress = await uniswapV2Factory.getPair(token.target, weth.target);
+    console.log("Pair Address is", pairAddress);
+
+    // Create an instance of the UniswapV2Pair contract
+    const pairABI = [
+      "function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+      "function token0() external view returns (address)",
+      "function token1() external view returns (address)",
+      "function balanceOf(address owner) external view returns (uint256)",
+      // Add other function signatures you need
+    ];
+    const pairContract = new ethers.Contract(
+      pairAddress,
+      pairABI,
+      ethers.provider
+    );
+
+    // Get reserves
+    let [reserve0, reserve1] = await pairContract.getReserves();
+
+    // Get token0 and token1 addresses
+    let token0 = await pairContract.token0();
+    let token1 = await pairContract.token1();
+
+    // Determine which reserve corresponds to which token
+    let token0IsWETH;
+    if (token0.toLowerCase() === weth.target.toLowerCase()) {
+      token0IsWETH = true;
+    } else if (token1.toLowerCase() === weth.target.toLowerCase()) {
+      token0IsWETH = false;
+    } else {
+      throw new Error("Neither token0 nor token1 is WETH");
+    }
+
+    // Compute token price
+    let tokenPrice;
+    console.log("Both Token Reserves: ", reserve0, reserve1);
+    if (token0IsWETH) {
+      // Price of token1 in terms of WETH
+      tokenPrice = Number(reserve0) / Number(reserve1);
+      console.log("Token Price in ", tokenPrice);
+    } else {
+      // Price of token0 in terms of WETH
+      tokenPrice = Number(reserve1) / Number(reserve0);
+    }
+
+    console.log(`Token price in WETH: ${tokenPrice}`);
+    // Let Price:
+    await token.transfer(addr2.address, "10000000000000000000000");
+    // Deposit 1
+    await token.connect(addr2).transfer(pairAddress, "10000000000000000000000");
+
+    // Get reserves
+    [reserve0, reserve1] = await pairContract.getReserves();
+    //   1000000000000000000000n 1000000000000000000000n
+
+    // Get token0 and token1 addresses
+    token0 = await pairContract.token0();
+    token1 = await pairContract.token1();
+
+    // Determine which reserve corresponds to which token
+    // let token0IsWETH;
+    if (token0.toLowerCase() === weth.target.toLowerCase()) {
+      token0IsWETH = true;
+    } else if (token1.toLowerCase() === weth.target.toLowerCase()) {
+      token0IsWETH = false;
+    } else {
+      throw new Error("Neither token0 nor token1 is WETH");
+    }
+
+    // Compute token price
+    // let tokenPrice;
+    console.log("Both Token Reserves: ", reserve0, reserve1);
+    if (token0IsWETH) {
+      // Price of token1 in terms of WETH
+      tokenPrice = Number(reserve0) / Number(reserve1);
+      console.log("Token Price in ", tokenPrice);
+    } else {
+      // Price of token0 in terms of WETH
+      tokenPrice = Number(reserve1) / Number(reserve0);
+    }
+
+    console.log(
+      "Balance Of Tokens: ",
+      await pairContract.balanceOf(weth.target),
+      await pairContract.balanceOf(token.target)
+    );
+    console.log(`Token price in WETH : ${tokenPrice}`);
   });
 });
