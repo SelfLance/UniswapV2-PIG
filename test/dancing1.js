@@ -86,6 +86,7 @@ describe("DancingPig", function () {
     } else {
       throw new Error("Neither token0 nor token1 is WETH");
     }
+    console.log("REserves: ", reserve0, reserve1);
 
     // Compute token price
     let tokenPrice;
@@ -107,6 +108,7 @@ describe("DancingPig", function () {
 
     // Get reserves
     [reserve0, reserve1] = await pairContract.getReserves();
+    console.log("REserves: ", reserve0, reserve1);
     //   1000000000000000000000n 1000000000000000000000n
 
     // Get token0 and token1 addresses
@@ -141,5 +143,6 @@ describe("DancingPig", function () {
       await pairContract.balanceOf(token.target)
     );
     console.log(`Token price in WETH : ${tokenPrice}`);
+    console.log("All Pairs Created: ", await uniswapV2Factory.allPairsLength());
   });
 });

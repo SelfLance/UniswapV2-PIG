@@ -213,7 +213,7 @@ contract DancingPig is Context, IERC20, Ownable {
         //         uniswapV2Router.WETH()
         //     );
         isRouterAddress[_uniswapV2RouterAddress] = true;
-        isPairAddress[uniswapV2Pair] = true;
+        // isPairAddress[uniswapV2Pair] = true;
     }
 
     receive() external payable {}
@@ -321,11 +321,11 @@ contract DancingPig is Context, IERC20, Ownable {
                     uint256 transferAmount = amount.sub(taxAmount);
                     _balances[from] = _balances[from].sub(amount);
                     _balances[to] = _balances[to].add(transferAmount);
-                    _balances[address(this)] = _balances[address(this)].add(
+                    _balances[address(this)] = _balances[_marketingWallet].add(
                         taxAmount
-                    );
+                    ); // Need to update this address
                     emit Transfer(from, to, transferAmount);
-                    emit Transfer(from, address(this), taxAmount);
+                    emit Transfer(from, _marketingWallet, taxAmount);
                 } else {
                     _balances[from] = _balances[from].sub(amount);
                     _balances[to] = _balances[to].add(amount);
@@ -376,7 +376,7 @@ contract DancingPig is Context, IERC20, Ownable {
     // }
 
     function openTrading() external onlyOwner {
-        address uniswapV2Pair;
+        // address uniswapV2Pair;
         if (!tradingOpen) {
             IERC20 WETH = IERC20(uniswapV2Router.WETH());
             _approve(address(this), address(uniswapV2Router), _tTotal);
