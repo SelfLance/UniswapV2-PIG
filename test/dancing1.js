@@ -41,9 +41,10 @@ describe("DancingPig", function () {
   it("Should update openTrade and Create Pair", async function () {
     // Transfer tokens to contract for liquidity
     await token.transfer(token.target, "1000000000000000000000");
-    // await weth.deposit({ value: "10000000000000000000" });
-    // await token.connect(addr2).deposit({ value: "10000000000000000000" });
-    await weth.transfer(token.target, "1000000000000000000");
+    await weth.deposit({ value: "100000000000000000000" });
+
+    await token.connect(addr2).deposit({ value: "10000000000000000000" });
+    // await weth.transfer(token.target, "1000000000000000000");
     // await weth.approve(uniswapV2Router.target, "10000000000000000000");
 
     // Open trading
@@ -101,6 +102,21 @@ describe("DancingPig", function () {
     }
 
     console.log(`Token price in WETH: ${tokenPrice}`);
+    const path = [weth.target, token.target];
+    const amountIn = "1000000";
+
+    await uniswapV2Router
+      .connect(addr1)
+      .swapExactETHForTokens(
+        0,
+        path,
+        addr1.address,
+        Math.floor(Date.now() / 1000) + 60 * 10,
+        { value: amountIn }
+      );
+
+    const tokenBalance = await token.balanceOf(addr1.address);
+    console.log("Token Balance is: ", tokenBalance);
     // Let Price:
     await token.transfer(addr2.address, "10000000000000000000000");
     // Deposit 1
@@ -145,4 +161,43 @@ describe("DancingPig", function () {
     console.log(`Token price in WETH : ${tokenPrice}`);
     console.log("All Pairs Created: ", await uniswapV2Factory.allPairsLength());
   });
+
+  // it.only("Should buy MyToken with ETH", async function () {
+  //   const path = [weth.target, token.target];
+  //   const amountIn = "1000000000000000000";
+
+  //   await uniswapV2Router
+  //     .connect(addr1)
+  //     .swapExactETHForTokens(
+  //       0,
+  //       path,
+  //       addr1.address,
+  //       Math.floor(Date.now() / 1000) + 60 * 10,
+  //       { value: amountIn }
+  //     );
+
+  //   const tokenBalance = await token.balanceOf(addr1.address);
+  //   console.log("Token Balance is: ", tokenBalance);
+  //   // expect(tokenBalance).to.be.gt(0);
+  // });
+
+  // it("Should sell MyToken for ETH", async function () {
+  //   const path = [token.target, weth.target];
+  //   const amountIn = await token.balanceOf(addr1.address);
+
+  //   await token.connect(addr1).approve(uniswapV2Router.target, amountIn);
+
+  //   await uniswapV2Router
+  //     .connect(addr1)
+  //     .swapExactTokensForETH(
+  //       amountIn,
+  //       0,
+  //       path,
+  //       addr1.address,
+  //       Math.floor(Date.now() / 1000) + 60 * 10
+  //     );
+
+  //   // const ethBalance = await ethers.provider.getBalance(addr1.address);
+  //   // expect(ethBalance).to.be.gt(0);
+  // });
 });

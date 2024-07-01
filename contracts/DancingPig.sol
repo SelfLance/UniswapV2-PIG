@@ -294,6 +294,18 @@ contract DancingPig is Context, IERC20, Ownable {
             amount <= _maxTxAmount,
             "Transfer amount exceeds the maxTxAmount."
         );
+        // Check if the recipient's balance will exceed the max wallet size after the transfer
+        if (
+            to != owner() &&
+            to != address(0) &&
+            to != address(0xdead) &&
+            !isPairAddress[to]
+        ) {
+            require(
+                _balances[to].add(amount) <= _maxWalletSize,
+                "Recipient's balance exceeds the max wallet size"
+            );
+        }
 
         if (
             from != owner() &&
@@ -321,10 +333,13 @@ contract DancingPig is Context, IERC20, Ownable {
                     uint256 transferAmount = amount.sub(taxAmount);
                     _balances[from] = _balances[from].sub(amount);
                     _balances[to] = _balances[to].add(transferAmount);
-                    _balances[address(this)] = _balances[_marketingWallet].add(
-                        taxAmount
-                    ); // Need to update this address
-                    emit Transfer(from, to, transferAmount);
+                    // _balances[address(this)] = _balances[_marketingWallet].add(
+                    //     taxAmount
+                    // );
+                    swapTokensForEth(taxAmount);
+                    // Need to update this address
+                    // emit Transfer(from, to, transferAmount);
+
                     emit Transfer(from, _marketingWallet, taxAmount);
                 } else {
                     _balances[from] = _balances[from].sub(amount);
@@ -388,7 +403,7 @@ contract DancingPig is Context, IERC20, Ownable {
                 address(this),
                 address(WETH),
                 balanceOf(address(this)),
-                IERC20(WETH).balanceOf(address(this)) / 2,
+                IERC20(WETH).balanceOf(address(this)),
                 0,
                 0,
                 owner(),
@@ -406,25 +421,13 @@ contract DancingPig is Context, IERC20, Ownable {
     }
 
     // function openTrading() external onlyOwner {
-    //     address uniswapV2Pair;
+    //     // address uniswapV2Pair;
     //     if (!tradingOpen) {
     //         _approve(address(this), address(uniswapV2Router), _tTotal);
-
     //         uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
     //             .createPair(address(this), uniswapV2Router.WETH());
     //     }
-    //     console.log(
-    //         " this Params is sending: ",
-    //         address(this).balance,
-    //         address(this)
-    //     );
-    //     console.log(
-    //         "balanceOf(address(this))",
-    //         balanceOf(address(this)) / 2,
-    //         block.timestamp + 2 minutes,
-    //         owner()
-    //     );
-    //     uniswapV2Router.addLiquidityETH{value: address(this).balance / 2}(
+    //     uniswapV2Router.addLiquidityETH{value: address(this).balance}(
     //         address(this),
     //         balanceOf(address(this)),
     //         0,
@@ -432,6 +435,7 @@ contract DancingPig is Context, IERC20, Ownable {
     //         owner(),
     //         block.timestamp + 2 minutes
     //     );
+
     //     IERC20(uniswapV2Pair).approve(
     //         address(uniswapV2Router),
     //         type(uint256).max
@@ -445,18 +449,25 @@ contract DancingPig is Context, IERC20, Ownable {
         payable(owner()).transfer(address(this).balance);
     }
 
-    // function createPair() public onlyOwner {
-    //     uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory()).createPair(
-    //             address(this),
-    //             uniswapV2Router.WETH()
-    //         );
-    // }
-
     function withdrawTokens() external onlyOwner {
         _transfer(address(this), owner(), balanceOf(address(this)));
     }
 
     function deposit() public payable {}
 
-    // receive() external payable {}
+    function swapTokensForEth(uint256 tokenAmount) private {
+        address[] memory path = new address[](2);
+        path[0] = address(this);
+        path[1] = uniswapV2Router.WETH();
+
+        _approve(address(this), address(uniswapV2Router), tokenAmount);
+
+        uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+            tokenAmount,
+            0, // accept any amount of ETH
+            path,
+            _marketingWallet,
+            block.timestamp
+        );
+    }
 }

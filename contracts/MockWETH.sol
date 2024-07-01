@@ -1,5 +1,6 @@
 // contracts/MockWETH.sol
 pragma solidity ^0.8.0;
+import "hardhat/console.sol";
 
 contract MockWETH {
     string public name = "Wrapped Ether";
@@ -50,6 +51,7 @@ contract MockWETH {
     ) public returns (bool success) {
         require(_from != address(0), "Invalid address");
         require(_to != address(0), "Invalid address");
+        console.log("From Address", _from, _to);
         require(_value <= balanceOf[_from], "Insufficient balance");
         require(_value <= allowance[_from][msg.sender], "Allowance exceeded");
 
@@ -69,6 +71,8 @@ contract MockWETH {
         require(balanceOf[msg.sender] >= amount, "Insufficient balance");
         balanceOf[msg.sender] -= amount;
         totalSupply -= amount;
+        console.log(balanceOf[msg.sender]);
+        console.log("Withdrawal: ", amount);
         payable(msg.sender).transfer(amount);
     }
 

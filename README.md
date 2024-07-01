@@ -33,6 +33,21 @@ Factory deployed to: https://testnet.snowtrace.io/token/0x9D91FBDd5467fE982e62Fd
 Router deployed to: https://testnet.snowtrace.io/token/0xE7C6301109bBc3C75127c6EDaFE78CcF822D81AE/contract/code
 
 
+# Fix Issue of PAIR Avalaunche
+WETH deployed to: 0x79aEf8fb59cA266F26BfA1a09b8cFDa024F1b1d2
+Token deployed to: 0xa09A1DF1afef729dAD84967fD179Fd3E74527bB4
+Factory deployed to: 0x7471A69cf7Bd44760125a749503734a25fD30E73
+Router deployed to: 0x11994d67b8F41d80E4BD388EeEf7576E6929fCFb
+
+
+
+
+# Already Deployed Network 
+
+Router Address: 0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008
+Factory Address: 0x7E0987E5b3a30e3f2828572Bb659A548460a3003
+WETH Address: 0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9
+
 
 
 
