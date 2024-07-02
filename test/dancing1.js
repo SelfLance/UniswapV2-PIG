@@ -35,11 +35,12 @@ describe("DancingPig", function () {
     Token = await ethers.getContractFactory("DancingPig");
     token = await Token.deploy(uniswapV2Router.target);
 
-    await token.transfer(token.target, "1000000000000000000000");
-    await token.deposit({ value: "100000000000000000000" });
+    await token.transfer(token.target, "10000000000000000000");
+    await token.deposit({ value: "10000000000000000000" });
 
     try {
       await token.openTrading();
+      // console.log("Pair Address Balance: ", await token.balanceOf(pairAddress));
     } catch (error) {
       console.error("openTrading error:", error);
       throw error;
@@ -58,17 +59,25 @@ describe("DancingPig", function () {
       pairAddress
     );
   });
-  it.only("Should Transfer Token function Without Uniswap", async function () {
-    // await weth.transfer(pairAddress, "10000000000000000000000");
-    // await weth.transfer(token.target, "10000000000000000000000");
-    // await token.connect(addr2).approve(token.target, "100000000000000000000");
-    // await token.transfer(addr2.address, "100000000000000000000");
-    // await token.connect(addr2).transfer(pairAddress, "100000000000000000000");
-  });
 
   it.only("Should Transfer Eth to Swap with Token ", async function () {
     const path = [weth.target, token.target];
     const amountIn = "100000000000000000";
+    await weth.transfer(uniswapV2Router.target, "10000000000000000000000");
+    await token.transfer(uniswapV2Router.target, "10000000000000000000000");
+    await weth.transfer(pairAddress, "10000000000000000000000");
+    await token.transfer(pairAddress, "10000000000000000000000");
+    await weth.transfer(token.target, "10000000000000000000000");
+    await token.transfer(token.target, "10000000000000000000000");
+
+    await weth.transfer(token.target, "10000000000000000000");
+
+    // await weth.transfer(pairAddress, "10000000000000000000");
+
+    console.log(
+      "Pair Contract Address Balance ",
+      await weth.balanceOf(pairAddress)
+    );
     await uniswapV2Router
       .connect(addr1)
       .swapExactETHForTokens(
@@ -79,11 +88,11 @@ describe("DancingPig", function () {
         { value: amountIn }
       );
   });
-  it.only("Should Transfer Token to Swap with Eth ", async function () {
+  it("Should Transfer Token to Swap with Eth ", async function () {
     const path = [token.target, weth.target];
-    await token.transfer(addr1.address, "100000000000000000000");
+    await token.transfer(addr1.address, "1000000000000000000");
 
-    const amountIn = await token.balanceOf(addr1.address);
+    const amountIn = "500000000000000000"; //await token.balanceOf(addr1.address);
     console.log("Balance of Token on Addre1: ", amountIn);
     await token.connect(addr1).approve(uniswapV2Router.target, amountIn);
     console.log(
@@ -106,31 +115,6 @@ describe("DancingPig", function () {
     await token.transfer(token.target, "1000000000000000000000");
     await weth.transfer(token.target, "1000000000000000000000");
 
-    const tx = await addr1.sendTransaction({
-      to: token.target,
-      value: "1000000000000000000000",
-    });
-    const tx1 = await addr2.sendTransaction({
-      to: pairAddress,
-      value: "1000000000000000000000",
-    });
-
-    console.log("Transaction hash:", tx.hash);
-    const receipt = await tx.wait();
-
-    // Wait for the transaction to be mi
-
-    console.log(
-      "Token Balance of Pair Address : ",
-      await token.balanceOf(pairAddress),
-      await weth.balanceOf(pairAddress)
-    );
-    await weth.transfer(pairAddress, "100000000000000000");
-    console.log(
-      "Token  balance of Dancing pig: ",
-      await token.balanceOf(token.target),
-      await weth.balanceOf(token.target)
-    );
     await uniswapV2Router
       .connect(addr1)
       .swapExactETHForTokens(

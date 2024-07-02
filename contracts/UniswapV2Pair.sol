@@ -9,7 +9,6 @@ import {UQ112x112} from "./libraries/UQ112x112.sol";
 import {IERC20} from "./interfaces/IERC20.sol";
 import {IUniswapV2Factory} from "./interfaces/IUniswapV2Factory.sol";
 import {IUniswapV2Callee} from "./interfaces/IUniswapV2Callee.sol";
-import "hardhat/console.sol";
 
 contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     using UQ112x112 for uint224;
@@ -52,13 +51,9 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     }
 
     function _safeTransfer(address token, address to, uint256 value) private {
-        console.log("Token and To :", token, to, value);
-        console.log("Contract itself: ", address(this));
-
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(IERC20.transfer.selector, to, value)
         );
-        console.log("Data: and Length: ", success);
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "UniswapV2: TRANSFER_FAILED"
@@ -196,7 +191,6 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
         address to,
         bytes calldata data
     ) external override lock {
-        console.log("Amout in and Out: ", amount0Out, amount1Out);
         require(
             amount0Out > 0 || amount1Out > 0,
             "UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT"
@@ -226,22 +220,12 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
             balance0 = IERC20(_token0).balanceOf(address(this));
             balance1 = IERC20(_token1).balanceOf(address(this));
         }
-        console.log("Balance of Zero: ", balance0, balance1, address(this));
-
         uint256 amount0In = balance0 > _reserve0 - amount0Out
             ? balance0 - (_reserve0 - amount0Out)
             : 0;
-        console.log("amount0In", balance0, _reserve0, amount0Out);
-        console.log("Amount Out: ", balance0 > _reserve0 - amount0Out);
-
         uint256 amount1In = balance1 > _reserve1 - amount1Out
             ? balance1 - (_reserve1 - amount1Out)
             : 0;
-        console.log("amount1In: ", balance1, _reserve1, amount1Out);
-        console.log(
-            "balance1 > _reserve1 - amount1Out: ",
-            balance1 > _reserve1 - amount1Out
-        );
         require(
             amount0In > 0 || amount1In > 0,
             "UniswapV2: INSUFFICIENT_INPUT_AMOUNT"

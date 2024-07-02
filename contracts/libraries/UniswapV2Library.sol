@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 //solhint-disable reason-string
 
 import {IUniswapV2Pair} from "../interfaces/IUniswapV2Pair.sol";
-import {IUniswapV2Factory} from "./../interfaces/IUniswapV2Factory.sol";
 
 library UniswapV2Library {
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
@@ -50,10 +49,8 @@ library UniswapV2Library {
         address tokenB
     ) internal view returns (uint256 reserveA, uint256 reserveB) {
         (address token0, ) = sortTokens(tokenA, tokenB);
-
         (uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(
-            IUniswapV2Factory(factory).getPair(tokenA, tokenB)
-            // pairFor(factory, tokenA, tokenB)
+            pairFor(factory, tokenA, tokenB)
         ).getReserves();
         (reserveA, reserveB) = tokenA == token0
             ? (reserve0, reserve1)

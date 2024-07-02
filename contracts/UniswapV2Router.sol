@@ -11,8 +11,6 @@ import {IWETH} from "./interfaces/IWETH.sol";
 import {TransferHelper} from "./libraries/TransferHelper.sol";
 import {UniswapV2Library} from "./libraries/UniswapV2Library.sol";
 
-import "hardhat/console.sol";
-
 contract UniswapV2Router is IUniswapV2Router {
     //solhint-disable-next-line immutable-vars-naming
     address public immutable override factory;
@@ -50,7 +48,6 @@ contract UniswapV2Router is IUniswapV2Router {
             tokenA,
             tokenB
         );
-
         if (reserveA == 0 && reserveB == 0) {
             (amountA, amountB) = (amountADesired, amountBDesired);
         } else {
@@ -105,11 +102,9 @@ contract UniswapV2Router is IUniswapV2Router {
             amountAMin,
             amountBMin
         );
-
-        address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
+        address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
         TransferHelper.safeTransferFrom(tokenA, msg.sender, pair, amountA);
         TransferHelper.safeTransferFrom(tokenB, msg.sender, pair, amountB);
-
         liquidity = IUniswapV2Pair(pair).mint(to);
     }
 
@@ -136,17 +131,11 @@ contract UniswapV2Router is IUniswapV2Router {
             amountTokenMin,
             amountETHMin
         );
-        console.log("Factory and others : ", factory, token, WETH);
-        // address pair = UniswapV2Library.pairFor(factory, token, WETH);
-        address pair = IUniswapV2Factory(factory).getPair(token, WETH);
-
-        console.log("Pair is: ", pair);
+        address pair = UniswapV2Library.pairFor(factory, token, WETH);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
         IWETH(WETH).deposit{value: amountETH}();
         assert(IWETH(WETH).transfer(pair, amountETH));
-        console.log("WETH transfered to pair: ", amountETH);
         liquidity = IUniswapV2Pair(pair).mint(to);
-
         // refund dust eth, if any
         if (msg.value > amountETH)
             TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
@@ -363,11 +352,8 @@ contract UniswapV2Router is IUniswapV2Router {
             address to = i < path.length - 2
                 ? UniswapV2Library.pairFor(factory, output, path[i + 2])
                 : _to;
-            console.log("Till here it's runing", factory, input, output);
-            address pari = IUniswapV2Factory(factory).getPair(input, output); // UniswapV2Library.pairFor(factory, input, output);
-            console.log("Pari is here: ", pari);
-
-            IUniswapV2Pair(pari).swap(amount0Out, amount1Out, to, new bytes(0));
+            IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output))
+                .swap(amount0Out, amount1Out, to, new bytes(0));
         }
     }
 
