@@ -37,6 +37,7 @@ describe("DancingPig", function () {
 
     await token.transfer(token.target, "1000000000000000000000");
     await token.deposit({ value: "100000000000000000000" });
+
     try {
       await token.openTrading();
     } catch (error) {
@@ -58,14 +59,47 @@ describe("DancingPig", function () {
     );
   });
   it.only("Should Transfer Token function Without Uniswap", async function () {
-    await weth.transfer(pairAddress, "10000000000000000000000");
-    await weth.transfer(token.target, "10000000000000000000000");
-    await token.connect(addr2).approve(token.target, "100000000000000000000");
-    await token.transfer(addr2.address, "100000000000000000000");
-
-    await token.connect(addr2).transfer(pairAddress, "100000000000000000000");
+    // await weth.transfer(pairAddress, "10000000000000000000000");
+    // await weth.transfer(token.target, "10000000000000000000000");
+    // await token.connect(addr2).approve(token.target, "100000000000000000000");
+    // await token.transfer(addr2.address, "100000000000000000000");
+    // await token.connect(addr2).transfer(pairAddress, "100000000000000000000");
   });
 
+  it.only("Should Transfer Eth to Swap with Token ", async function () {
+    const path = [weth.target, token.target];
+    const amountIn = "100000000000000000";
+    await uniswapV2Router
+      .connect(addr1)
+      .swapExactETHForTokens(
+        0,
+        path,
+        addr1.address,
+        Math.floor(Date.now() / 1000) + 60 * 10,
+        { value: amountIn }
+      );
+  });
+  it.only("Should Transfer Token to Swap with Eth ", async function () {
+    const path = [token.target, weth.target];
+    await token.transfer(addr1.address, "100000000000000000000");
+
+    const amountIn = await token.balanceOf(addr1.address);
+    console.log("Balance of Token on Addre1: ", amountIn);
+    await token.connect(addr1).approve(uniswapV2Router.target, amountIn);
+    console.log(
+      "Pair Contract Address Balance ",
+      await token.balanceOf(pairAddress)
+    );
+    await uniswapV2Router
+      .connect(addr1)
+      .swapExactTokensForETH(
+        amountIn,
+        0,
+        path,
+        addr1.address,
+        Math.floor(Date.now() / 1000) + 60 * 10
+      );
+  });
   it("Should Swpa Eth for Token", async function () {
     const path = [weth.target, token.target];
     const amountIn = "100000000000000000";

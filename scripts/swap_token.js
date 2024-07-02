@@ -97,6 +97,11 @@ async function main() {
     console.log("Approve Gas: ", approveTx);
 
     // Populate the transaction
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 10;
+    const path = [tokenAddress, wethAddress];
+
+    // Get the balance of tokens
+    const amountIn = "10000000000000000000";
     const tx = await uniswapV2Router.populateTransaction.swapExactTokensForETH(
       amountIn,
       0, // Accept any amount of ETH

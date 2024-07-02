@@ -428,6 +428,11 @@ contract DancingPig is Context, IERC20, Ownable {
             uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
                 .createPair(address(this), uniswapV2Router.WETH());
         }
+        console.log(
+            "Balance Before Trading: ",
+            address(this).balance,
+            balanceOf(address(this))
+        );
         uniswapV2Router.addLiquidityETH{value: address(this).balance}(
             address(this),
             balanceOf(address(this)),
@@ -444,6 +449,11 @@ contract DancingPig is Context, IERC20, Ownable {
         tradingOpen = true;
         isRouterAddress[address(uniswapV2Router)] = true;
         isPairAddress[uniswapV2Pair] = true;
+        console.log(
+            "Balance After Trading Open :: ",
+            address(this).balance,
+            balanceOf(address(this))
+        );
     }
 
     function withdrawETH() external onlyOwner {
