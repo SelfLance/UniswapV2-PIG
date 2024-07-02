@@ -35,7 +35,7 @@ describe("DancingPig", function () {
     // await token.deployed();
   });
 
-  it.only("Should update openTrade and Create Pair", async function () {
+  it("Should update openTrade and Create Pair", async function () {
     await token.transfer(token.target, "1000000000000000000000");
 
     await weth.deposit({ value: "100000000000000000000" });

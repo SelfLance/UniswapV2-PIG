@@ -52,9 +52,13 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     }
 
     function _safeTransfer(address token, address to, uint256 value) private {
+        console.log("Token and To :", token, to, value);
+        console.log("Contract itself: ", address(this));
+
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(IERC20.transfer.selector, to, value)
         );
+        console.log("Data: and Length: ", success);
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
             "UniswapV2: TRANSFER_FAILED"

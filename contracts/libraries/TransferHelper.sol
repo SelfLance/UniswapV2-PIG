@@ -33,6 +33,8 @@ library TransferHelper {
         address to,
         uint256 value
     ) internal {
+        console.log("TransferHelper::transferFrom: ", token, from, to);
+        console.log("Value : ", value);
         // bytes4(keccak256(bytes('transferFrom(address,address,uint256)')));
         (bool success, bytes memory data) = token.call(
             abi.encodeWithSelector(0x23b872dd, from, to, value)

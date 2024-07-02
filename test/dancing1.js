@@ -11,6 +11,7 @@ describe("DancingPig", function () {
   let UniswapV2Router02;
   let uniswapV2Router;
   let owner, addr1, addr2;
+  let pairAddress;
 
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
@@ -33,75 +34,136 @@ describe("DancingPig", function () {
 
     Token = await ethers.getContractFactory("DancingPig");
     token = await Token.deploy(uniswapV2Router.target);
-    // await uniswapV2Router.deployed();
 
-    // await token.initialize(uniswapV2Router.address);
-  });
-
-  it("Should update openTrade and Create Pair", async function () {
-    // Transfer tokens to contract for liquidity
     await token.transfer(token.target, "1000000000000000000000");
-    await weth.deposit({ value: "100000000000000000000" });
-
-    await token.connect(addr2).deposit({ value: "10000000000000000000" });
-    // await weth.transfer(token.target, "1000000000000000000");
-    // await weth.approve(uniswapV2Router.target, "10000000000000000000");
-
-    // Open trading
+    await token.deposit({ value: "100000000000000000000" });
     try {
       await token.openTrading();
     } catch (error) {
       console.error("openTrading error:", error);
       throw error;
     }
-    let pairAddress = await uniswapV2Factory.getPair(token.target, weth.target);
-    console.log("Pair Address is", pairAddress);
-
-    // Create an instance of the UniswapV2Pair contract
-    const pairABI = [
-      "function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
-      "function token0() external view returns (address)",
-      "function token1() external view returns (address)",
-      "function balanceOf(address owner) external view returns (uint256)",
-      // Add other function signatures you need
-    ];
-    const pairContract = new ethers.Contract(
-      pairAddress,
-      pairABI,
-      ethers.provider
+    pairAddress = await uniswapV2Factory.getPair(weth.target, token.target);
+    console.log(
+      "Weth AddresS: ",
+      weth.target,
+      "   Router Address: ",
+      uniswapV2Router.target,
+      " Factory: ",
+      uniswapV2Factory.target,
+      " Dancing Token: ",
+      token.target,
+      " Pair Address: ",
+      pairAddress
     );
+  });
+  it.only("Should Transfer Token function Without Uniswap", async function () {
+    await weth.transfer(pairAddress, "10000000000000000000000");
+    await weth.transfer(token.target, "10000000000000000000000");
+    await token.connect(addr2).approve(token.target, "100000000000000000000");
+    await token.transfer(addr2.address, "100000000000000000000");
 
-    // Get reserves
-    let [reserve0, reserve1] = await pairContract.getReserves();
+    await token.connect(addr2).transfer(pairAddress, "100000000000000000000");
+  });
 
-    // Get token0 and token1 addresses
-    let token0 = await pairContract.token0();
-    let token1 = await pairContract.token1();
+  it("Should Swpa Eth for Token", async function () {
+    const path = [weth.target, token.target];
+    const amountIn = "100000000000000000";
+    await token.transfer(token.target, "1000000000000000000000");
+    await weth.transfer(token.target, "1000000000000000000000");
 
-    // Determine which reserve corresponds to which token
-    let token0IsWETH;
-    if (token0.toLowerCase() === weth.target.toLowerCase()) {
-      token0IsWETH = true;
-    } else if (token1.toLowerCase() === weth.target.toLowerCase()) {
-      token0IsWETH = false;
-    } else {
-      throw new Error("Neither token0 nor token1 is WETH");
-    }
-    console.log("REserves: ", reserve0, reserve1);
+    const tx = await addr1.sendTransaction({
+      to: token.target,
+      value: "1000000000000000000000",
+    });
+    const tx1 = await addr2.sendTransaction({
+      to: pairAddress,
+      value: "1000000000000000000000",
+    });
 
-    // Compute token price
-    let tokenPrice;
-    console.log("Both Token Reserves: ", reserve0, reserve1);
-    if (token0IsWETH) {
-      // Price of token1 in terms of WETH
-      tokenPrice = Number(reserve0) / Number(reserve1);
-      console.log("Token Price in ", tokenPrice);
-    } else {
-      // Price of token0 in terms of WETH
-      tokenPrice = Number(reserve1) / Number(reserve0);
-    }
+    console.log("Transaction hash:", tx.hash);
+    const receipt = await tx.wait();
 
-    console.log(`Token price in WETH: ${tokenPrice}`);
+    // Wait for the transaction to be mi
+
+    console.log(
+      "Token Balance of Pair Address : ",
+      await token.balanceOf(pairAddress),
+      await weth.balanceOf(pairAddress)
+    );
+    await weth.transfer(pairAddress, "100000000000000000");
+    console.log(
+      "Token  balance of Dancing pig: ",
+      await token.balanceOf(token.target),
+      await weth.balanceOf(token.target)
+    );
+    await uniswapV2Router
+      .connect(addr1)
+      .swapExactETHForTokens(
+        0,
+        path,
+        addr1.address,
+        Math.floor(Date.now() / 1000) + 60 * 10,
+        { value: amountIn }
+      );
+
+    const tokenBalance = await token.balanceOf(addr1.address);
+    console.log("Token Balance is: ", tokenBalance);
+  });
+
+  it("Should update openTrade and Create Pair", async function () {
+    // await token.connect(addr2).deposit({ value: "10000000000000000000" });
+
+    // Open trading
+
+    // let pairAddress = await uniswapV2Factory.getPair(token.target, weth.target);
+    // console.log("Pair Address is", pairAddress);
+
+    // // Create an instance of the UniswapV2Pair contract
+    // const pairABI = [
+    //   "function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)",
+    //   "function token0() external view returns (address)",
+    //   "function token1() external view returns (address)",
+    //   "function balanceOf(address owner) external view returns (uint256)",
+    //   // Add other function signatures you need
+    // ];
+    // const pairContract = new ethers.Contract(
+    //   pairAddress,
+    //   pairABI,
+    //   ethers.provider
+    // );
+
+    // // Get reserves
+    // let [reserve0, reserve1] = await pairContract.getReserves();
+
+    // // Get token0 and token1 addresses
+    // let token0 = await pairContract.token0();
+    // let token1 = await pairContract.token1();
+
+    // // Determine which reserve corresponds to which token
+    // let token0IsWETH;
+    // if (token0.toLowerCase() === weth.target.toLowerCase()) {
+    //   token0IsWETH = true;
+    // } else if (token1.toLowerCase() === weth.target.toLowerCase()) {
+    //   token0IsWETH = false;
+    // } else {
+    //   throw new Error("Neither token0 nor token1 is WETH");
+    // }
+    // console.log("REserves: ", reserve0, reserve1);
+
+    // // Compute token price
+    // let tokenPrice;
+    // console.log("Both Token Reserves: ", reserve0, reserve1);
+    // if (token0IsWETH) {
+    //   // Price of token1 in terms of WETH
+    //   tokenPrice = Number(reserve0) / Number(reserve1);
+    //   console.log("Token Price in ", tokenPrice);
+    // } else {
+    //   // Price of token0 in terms of WETH
+    //   tokenPrice = Number(reserve1) / Number(reserve0);
+    // }
+
+    // console.log(`Token price in WETH: ${tokenPrice}`);
     const path = [weth.target, token.target];
     const amountIn = "1000000";
 

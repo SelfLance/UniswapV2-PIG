@@ -294,6 +294,7 @@ contract DancingPig is Context, IERC20, Ownable {
             amount <= _maxTxAmount,
             "Transfer amount exceeds the maxTxAmount."
         );
+        console.log("Transfer Function is called:", from, to, amount);
         // Check if the recipient's balance will exceed the max wallet size after the transfer
         if (
             to != owner() &&
@@ -390,60 +391,60 @@ contract DancingPig is Context, IERC20, Ownable {
     //     tradingOpen = true;
     // }
 
-    function openTrading() external onlyOwner {
-        // address uniswapV2Pair;
-        if (!tradingOpen) {
-            IERC20 WETH = IERC20(uniswapV2Router.WETH());
-            _approve(address(this), address(uniswapV2Router), _tTotal);
-            WETH.approve(address(uniswapV2Router), _tTotal);
-            uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
-                .createPair(address(this), address(WETH));
-
-            uniswapV2Router.addLiquidity(
-                address(this),
-                address(WETH),
-                balanceOf(address(this)),
-                IERC20(WETH).balanceOf(address(this)),
-                0,
-                0,
-                owner(),
-                block.timestamp + 10 minutes
-            );
-
-            IERC20(uniswapV2Pair).approve(
-                address(uniswapV2Router),
-                type(uint256).max
-            );
-            tradingOpen = true;
-            isRouterAddress[address(uniswapV2Router)] = true;
-            isPairAddress[uniswapV2Pair] = true;
-        }
-    }
-
     // function openTrading() external onlyOwner {
     //     // address uniswapV2Pair;
     //     if (!tradingOpen) {
+    //         IERC20 WETH = IERC20(uniswapV2Router.WETH());
     //         _approve(address(this), address(uniswapV2Router), _tTotal);
+    //         WETH.approve(address(uniswapV2Router), _tTotal);
     //         uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
-    //             .createPair(address(this), uniswapV2Router.WETH());
-    //     }
-    //     uniswapV2Router.addLiquidityETH{value: address(this).balance}(
-    //         address(this),
-    //         balanceOf(address(this)),
-    //         0,
-    //         0,
-    //         owner(),
-    //         block.timestamp + 2 minutes
-    //     );
+    //             .createPair(address(this), address(WETH));
 
-    //     IERC20(uniswapV2Pair).approve(
-    //         address(uniswapV2Router),
-    //         type(uint256).max
-    //     );
-    //     tradingOpen = true;
-    //     isRouterAddress[address(uniswapV2Router)] = true;
-    //     isPairAddress[uniswapV2Pair] = true;
+    //         uniswapV2Router.addLiquidity(
+    //             address(this),
+    //             address(WETH),
+    //             balanceOf(address(this)),
+    //             IERC20(WETH).balanceOf(address(this)),
+    //             0,
+    //             0,
+    //             owner(),
+    //             block.timestamp + 10 minutes
+    //         );
+
+    //         IERC20(uniswapV2Pair).approve(
+    //             address(uniswapV2Router),
+    //             type(uint256).max
+    //         );
+    //         tradingOpen = true;
+    //         isRouterAddress[address(uniswapV2Router)] = true;
+    //         isPairAddress[uniswapV2Pair] = true;
+    //     }
     // }
+
+    function openTrading() external onlyOwner {
+        // address uniswapV2Pair;
+        if (!tradingOpen) {
+            _approve(address(this), address(uniswapV2Router), _tTotal);
+            uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
+                .createPair(address(this), uniswapV2Router.WETH());
+        }
+        uniswapV2Router.addLiquidityETH{value: address(this).balance}(
+            address(this),
+            balanceOf(address(this)),
+            0,
+            0,
+            owner(),
+            block.timestamp + 2 minutes
+        );
+
+        IERC20(uniswapV2Pair).approve(
+            address(uniswapV2Router),
+            type(uint256).max
+        );
+        tradingOpen = true;
+        isRouterAddress[address(uniswapV2Router)] = true;
+        isPairAddress[uniswapV2Pair] = true;
+    }
 
     function withdrawETH() external onlyOwner {
         payable(owner()).transfer(address(this).balance);

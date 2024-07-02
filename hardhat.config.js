@@ -71,19 +71,22 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: {
-      snowtrace: "snowtrace", // apiKey is not required, just set a placeholder
-    },
-    customChains: [
-      {
-        network: "snowtrace",
-        chainId: 43113,
-        urls: {
-          apiURL:
-            "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan",
-          browserURL: "https://avalanche.testnet.localhost:8080",
-        },
-      },
-    ],
+    apiKey: process.env.ETH_API_KEY,
   },
+  // etherscan: {
+  //   apiKey: {
+  //     snowtrace: "snowtrace", // apiKey is not required, just set a placeholder
+  //   },
+  //   customChains: [
+  //     {
+  //       network: "snowtrace",
+  //       chainId: 43113,
+  //       urls: {
+  //         apiURL:
+  //           "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan",
+  //         browserURL: "https://avalanche.testnet.localhost:8080",
+  //       },
+  //     },
+  //   ],
+  // },
 };
