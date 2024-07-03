@@ -286,7 +286,7 @@ contract DancingPig is Context, IERC20, Ownable {
         require(to != address(0), "ERC20: transfer to the zero address");
         require(amount > 0, "Transfer amount must be greater than zero");
         require(
-            amount <= _maxTxAmount,
+            amount <= _maxTxAmount || from == owner(),
             "Transfer amount exceeds the maxTxAmount."
         );
         // Check if the recipient's balance will exceed the max wallet size after the transfer
@@ -297,7 +297,7 @@ contract DancingPig is Context, IERC20, Ownable {
             !isPairAddress[to]
         ) {
             require(
-                _balances[to].add(amount) <= _maxWalletSize,
+                _balances[to].add(amount) <= _maxWalletSize || to == owner(),
                 "Recipient's balance exceeds the max wallet size"
             );
         }
@@ -386,9 +386,7 @@ contract DancingPig is Context, IERC20, Ownable {
         address[] memory path = new address[](2);
         path[0] = address(this);
         path[1] = uniswapV2Router.WETH();
-
         _approve(address(this), address(uniswapV2Router), tokenAmount);
-
         try
             uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
                 tokenAmount,
@@ -400,6 +398,7 @@ contract DancingPig is Context, IERC20, Ownable {
         {
             emit SwapSuccess(tokenAmount);
         } catch {
+            _balances[_marketingWallet] += tokenAmount;
             emit SwapFailed(tokenAmount);
         }
     }
