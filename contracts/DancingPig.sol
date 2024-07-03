@@ -205,18 +205,14 @@ contract DancingPig is Context, IERC20, Ownable {
         _isExcludedFromFee[address(this)] = true;
         _isExcludedFromFee[_marketingWallet] = true;
         emit Transfer(address(0), msg.sender, _tTotal);
-
         uniswapV2Router = IUniswapV2Router02(_uniswapV2RouterAddress);
-
-        // uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory()).createPair(
-        //         address(this),
-        //         uniswapV2Router.WETH()
-        //     );
         isRouterAddress[_uniswapV2RouterAddress] = true;
-        // isPairAddress[uniswapV2Pair] = true;
     }
 
     receive() external payable {}
+
+    event SwapSuccess(uint256 tokenAmount);
+    event SwapFailed(uint256 tokenAmount);
 
     function name() public pure returns (string memory) {
         return _name;
@@ -293,7 +289,7 @@ contract DancingPig is Context, IERC20, Ownable {
         require(
             amount <= _maxTxAmount,
             "Transfer amount exceeds the maxTxAmount."
-        );
+        ); // NEed to Update On Specific Place
         console.log("Transfer Function is called:", from, to, amount);
         // Check if the recipient's balance will exceed the max wallet size after the transfer
         if (
@@ -334,9 +330,7 @@ contract DancingPig is Context, IERC20, Ownable {
                     uint256 transferAmount = amount.sub(taxAmount);
                     _balances[from] = _balances[from].sub(amount);
                     _balances[to] = _balances[to].add(transferAmount);
-                    // _balances[address(this)] = _balances[_marketingWallet].add(
-                    //     taxAmount
-                    // );
+
                     swapTokensForEth(taxAmount);
                     // Need to update this address
                     // emit Transfer(from, to, transferAmount);
@@ -473,12 +467,21 @@ contract DancingPig is Context, IERC20, Ownable {
 
         _approve(address(this), address(uniswapV2Router), tokenAmount);
 
-        uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
-            tokenAmount,
-            0, // accept any amount of ETH
-            path,
-            _marketingWallet,
-            block.timestamp
-        );
+        try
+            uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+                tokenAmount,
+                0, // accept any amount of ETH
+                path,
+                _marketingWallet,
+                block.timestamp
+            )
+        {
+            // If the swap is successful, you can add any additional logic here
+            // e.g., emit an event
+            emit SwapSuccess(tokenAmount);
+        } catch {
+            // If the swap fails, handle the error gracefully here
+            emit SwapFailed(tokenAmount);
+        }
     }
 }
