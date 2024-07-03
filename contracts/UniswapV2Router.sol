@@ -11,8 +11,6 @@ import {IWETH} from "./interfaces/IWETH.sol";
 import {TransferHelper} from "./libraries/TransferHelper.sol";
 import {UniswapV2Library} from "./libraries/UniswapV2Library.sol";
 
-import "hardhat/console.sol";
-
 contract UniswapV2Router is IUniswapV2Router {
     //solhint-disable-next-line immutable-vars-naming
     address public immutable override factory;
@@ -136,15 +134,11 @@ contract UniswapV2Router is IUniswapV2Router {
             amountTokenMin,
             amountETHMin
         );
-        console.log("Factory and others : ", factory, token, WETH);
         // address pair = UniswapV2Library.pairFor(factory, token, WETH);
         address pair = IUniswapV2Factory(factory).getPair(token, WETH);
-
-        console.log("Pair is: ", pair);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
         IWETH(WETH).deposit{value: amountETH}();
         assert(IWETH(WETH).transfer(pair, amountETH));
-        console.log("WETH transfered to pair: ", amountETH);
         liquidity = IUniswapV2Pair(pair).mint(to);
 
         // refund dust eth, if any
@@ -363,9 +357,7 @@ contract UniswapV2Router is IUniswapV2Router {
             address to = i < path.length - 2
                 ? UniswapV2Library.pairFor(factory, output, path[i + 2])
                 : _to;
-            console.log("Till here it's runing", factory, input, output);
             address pari = IUniswapV2Factory(factory).getPair(input, output); // UniswapV2Library.pairFor(factory, input, output);
-            console.log("Pari is here: ", pari);
 
             IUniswapV2Pair(pari).swap(amount0Out, amount1Out, to, new bytes(0));
         }
