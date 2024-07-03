@@ -16,7 +16,7 @@ async function main() {
   //   const router = await UniswapV2Router02.deploy(factory.target, weth.target);
   // Deploy the contracts
   //   await weth.deployed();
-  const routerAddress = "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008";
+  const routerAddress = "0xE649933D24b9174595eAfA038F711a7D1c1b066b";
 
   const token = await Token.deploy(routerAddress);
 

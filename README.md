@@ -49,5 +49,9 @@ UniswapV2Pair Address: 0x7Df448F34FdF73A1eaB7853dd3810354e8ae8A20
 
 
 
+Fauji: 0x029318aF4F1f52b85c4e95230fcbAFa757dd019b
+
+
+
 
 

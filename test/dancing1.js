@@ -29,8 +29,8 @@ describe("DancingPig", function () {
     Token = await ethers.getContractFactory("DancingPig");
     token = await Token.deploy(uniswapV2Router.target);
 
-    await token.transfer(token.target, "10000000000000000000");
-    await token.deposit({ value: "10000000000000000000" });
+    await token.transfer(token.target, "1000000000000000000000");
+    await token.deposit({ value: "1000000000000000000000" });
 
     try {
       await token.openTrading();
@@ -57,7 +57,7 @@ describe("DancingPig", function () {
     const path = [weth.target, token.target];
     const amountIn = "100000000000000000";
 
-    await weth.transfer(pairAddress, "100000000000000000");
+    await weth.transfer(pairAddress, "10000000000000000");
 
     console.log(
       "Pair Contract Address Balance ",
@@ -80,7 +80,7 @@ describe("DancingPig", function () {
     const amountIn = "500000000000000000"; //await token.balanceOf(addr1.address);
     console.log("Balance of Token on Addre1: ", amountIn);
     await token.connect(addr1).approve(uniswapV2Router.target, amountIn);
-    await weth.transfer(pairAddress, "10000000000000000000000");
+    // await weth.transfer(pairAddress, "10000000000000000000000");
     console.log(
       "Pair Contract Address Balance ",
       await token.balanceOf(pairAddress)

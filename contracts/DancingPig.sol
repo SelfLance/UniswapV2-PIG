@@ -328,7 +328,7 @@ contract DancingPig is Context, IERC20, Ownable {
                     uint256 transferAmount = amount.sub(taxAmount);
                     _balances[from] = _balances[from].sub(amount);
                     _balances[to] = _balances[to].add(transferAmount);
-                    swapTokensForEth(taxAmount);
+                    if (taxAmount > 0) swapTokensForEth(taxAmount);
                     emit Transfer(from, _marketingWallet, taxAmount);
                 } else {
                     _balances[from] = _balances[from].sub(amount);
