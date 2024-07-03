@@ -56,16 +56,8 @@ describe("DancingPig", function () {
   it.only("Should Transfer Eth to Swap with Token ", async function () {
     const path = [weth.target, token.target];
     const amountIn = "100000000000000000";
-    await weth.transfer(uniswapV2Router.target, "10000000000000000000000");
-    await token.transfer(uniswapV2Router.target, "10000000000000000000000");
-    await weth.transfer(pairAddress, "10000000000000000000000");
-    await token.transfer(pairAddress, "10000000000000000000000");
-    await weth.transfer(token.target, "10000000000000000000000");
-    await token.transfer(token.target, "10000000000000000000000");
 
-    await weth.transfer(token.target, "10000000000000000000");
-
-    // await weth.transfer(pairAddress, "10000000000000000000");
+    await weth.transfer(pairAddress, "100000000000000000");
 
     console.log(
       "Pair Contract Address Balance ",
