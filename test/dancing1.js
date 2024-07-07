@@ -16,11 +16,11 @@ describe("DancingPig", function () {
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
 
-    WETH = await ethers.getContractFactory("MockWETH");
+    WETH = await ethers.getContractFactory("WETH9");
     weth = await WETH.deploy();
     UniswapV2Factory = await ethers.getContractFactory("UniswapV2Factory");
     uniswapV2Factory = await UniswapV2Factory.deploy(owner.address);
-    UniswapV2Router02 = await ethers.getContractFactory("UniswapV2Router");
+    UniswapV2Router02 = await ethers.getContractFactory("UniswapV2Router02");
     uniswapV2Router = await UniswapV2Router02.deploy(
       uniswapV2Factory.target,
       weth.target
@@ -30,8 +30,8 @@ describe("DancingPig", function () {
     token = await Token.deploy(uniswapV2Router.target);
 
     await token.transfer(token.target, "1000000000000000000000");
-    await token.deposit({ value: "1000000000000000000000" });
-
+    await weth.deposit({ value: "100000000000000000000" });
+    await weth.transfer(token.target, "100000000000000000000");
     try {
       await token.openTrading();
     } catch (error) {
@@ -56,8 +56,8 @@ describe("DancingPig", function () {
   it.only("Should Transfer Eth to Swap with Token ", async function () {
     const path = [weth.target, token.target];
     const amountIn = "100000000000000000";
-
-    await weth.transfer(pairAddress, "10000000000000000");
+    await weth.deposit({ value: "100000000000000000000" });
+    await weth.transfer(pairAddress, "100000000000000000000");
 
     console.log(
       "Pair Contract Address Balance ",
@@ -85,6 +85,14 @@ describe("DancingPig", function () {
       "Pair Contract Address Balance ",
       await token.balanceOf(pairAddress)
     );
+    await token
+      .connect(addr1)
+      .approve(uniswapV2Router.target, "1000000000000000000");
+    console.log(
+      "uniswapV2Router : ",
+      uniswapV2Factory.getPair(token.target, weth.target)
+    );
+
     await uniswapV2Router
       .connect(addr1)
       .swapExactTokensForETH(

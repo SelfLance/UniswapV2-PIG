@@ -6,7 +6,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.24",
+        version: "0.8.25",
         settings: {
           optimizer: {
             enabled: true,
@@ -15,7 +15,25 @@ module.exports = {
         },
       },
       {
-        version: "0.8.0",
+        version: "0.6.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        version: "0.5.16",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        version: "0.4.18",
         settings: {
           optimizer: {
             enabled: true,
@@ -70,23 +88,23 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
   },
-  // etherscan: {
-  //   apiKey: process.env.ETH_API_KEY,
-  // },
   etherscan: {
-    apiKey: {
-      snowtrace: "snowtrace", // apiKey is not required, just set a placeholder
-    },
-    customChains: [
-      {
-        network: "snowtrace",
-        chainId: 43113,
-        urls: {
-          apiURL:
-            "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan",
-          browserURL: "https://avalanche.testnet.localhost:8080",
-        },
-      },
-    ],
+    apiKey: process.env.ETH_API_KEY,
   },
+  // etherscan: {
+  //   apiKey: {
+  //     snowtrace: "snowtrace", // apiKey is not required, just set a placeholder
+  //   },
+  //   customChains: [
+  //     {
+  //       network: "snowtrace",
+  //       chainId: 43113,
+  //       urls: {
+  //         apiURL:
+  //           "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan",
+  //         browserURL: "https://avalanche.testnet.localhost:8080",
+  //       },
+  //     },
+  //   ],
+  // },
 };

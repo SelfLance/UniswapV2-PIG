@@ -1,6 +1,9 @@
+/**
+ *Submitted for verification at Etherscan.io on 2024-07-05
+ */
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import {IUniswapV2Pair} from "./interfaces/IUniswapV2Pair.sol";
 
 abstract contract Context {
     function _msgSender() internal view virtual returns (address) {
@@ -9,34 +12,37 @@ abstract contract Context {
 }
 
 interface IERC20 {
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    function name() external view returns (string memory);
+
+    function symbol() external view returns (string memory);
+
+    function decimals() external view returns (uint8);
+
     function totalSupply() external view returns (uint256);
 
-    function balanceOf(address account) external view returns (uint256);
-
-    function transfer(
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
+    function balanceOf(address owner) external view returns (uint256);
 
     function allowance(
         address owner,
         address spender
     ) external view returns (uint256);
 
-    function approve(address spender, uint256 amount) external returns (bool);
+    function approve(address spender, uint256 value) external returns (bool);
+
+    function transfer(address to, uint256 value) external returns (bool);
 
     function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
+        address from,
+        address to,
         uint256 value
-    );
+    ) external returns (bool);
 }
 
 library SafeMath {
@@ -128,36 +134,40 @@ contract Ownable is Context {
 }
 
 interface IUniswapV2Factory {
+    event PairCreated(
+        address indexed token0,
+        address indexed token1,
+        address pair,
+        uint
+    );
+
+    function feeTo() external view returns (address);
+
+    function feeToSetter() external view returns (address);
+
+    function getPair(
+        address tokenA,
+        address tokenB
+    ) external view returns (address pair);
+
+    function allPairs(uint) external view returns (address pair);
+
+    function allPairsLength() external view returns (uint);
+
     function createPair(
         address tokenA,
         address tokenB
     ) external returns (address pair);
+
+    function setFeeTo(address) external;
+
+    function setFeeToSetter(address) external;
 }
 
-interface IUniswapV2Router02 {
-    function swapExactTokensForETHSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        address[] calldata path,
-        address to,
-        uint deadline
-    ) external;
+interface IUniswapV2Router01 {
+    function factory() external view returns (address);
 
-    function factory() external pure returns (address);
-
-    function WETH() external pure returns (address);
-
-    function addLiquidityETH(
-        address token,
-        uint amountTokenDesired,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    )
-        external
-        payable
-        returns (uint amountToken, uint amountETH, uint liquidity);
+    function WETH() external view returns (address);
 
     function addLiquidity(
         address tokenA,
@@ -169,13 +179,192 @@ interface IUniswapV2Router02 {
         address to,
         uint256 deadline
     ) external returns (uint256 amountA, uint256 amountB, uint256 liquidity);
+
+    function addLiquidityETH(
+        address token,
+        uint256 amountTokenDesired,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    )
+        external
+        payable
+        returns (uint256 amountToken, uint256 amountETH, uint256 liquidity);
+
+    function removeLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountA, uint256 amountB);
+
+    function removeLiquidityETH(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountToken, uint256 amountETH);
+
+    function removeLiquidityWithPermit(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline,
+        bool approveMax,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (uint256 amountA, uint256 amountB);
+
+    function removeLiquidityETHWithPermit(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline,
+        bool approveMax,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (uint256 amountToken, uint256 amountETH);
+
+    function swapExactTokensForTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapTokensForExactTokens(
+        uint256 amountOut,
+        uint256 amountInMax,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapExactETHForTokens(
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable returns (uint256[] memory amounts);
+
+    function swapTokensForExactETH(
+        uint256 amountOut,
+        uint256 amountInMax,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapExactTokensForETH(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapETHForExactTokens(
+        uint256 amountOut,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable returns (uint256[] memory amounts);
+
+    function quote(
+        uint256 amountA,
+        uint256 reserveA,
+        uint256 reserveB
+    ) external pure returns (uint256 amountB);
+
+    function getAmountOut(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) external pure returns (uint256 amountOut);
+
+    function getAmountIn(
+        uint256 amountOut,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) external pure returns (uint256 amountIn);
+
+    function getAmountsOut(
+        uint256 amountIn,
+        address[] calldata path
+    ) external view returns (uint256[] memory amounts);
+
+    function getAmountsIn(
+        uint256 amountOut,
+        address[] calldata path
+    ) external view returns (uint256[] memory amounts);
+}
+
+interface IUniswapV2Router is IUniswapV2Router01 {
+    function removeLiquidityETHSupportingFeeOnTransferTokens(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountETH);
+
+    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline,
+        bool approveMax,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (uint256 amountETH);
+
+    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
+
+    function swapExactETHForTokensSupportingFeeOnTransferTokens(
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable;
+
+    function swapExactTokensForETHSupportingFeeOnTransferTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
 }
 
 contract DancingPig is Context, IERC20, Ownable {
     using SafeMath for uint256;
 
-    uint256 private _buyTax = 20;
-    uint256 private _sellTax = 20;
+    uint256 private _buyTax = 13;
+    uint256 private _sellTax = 15;
     uint8 private constant _decimals = 18;
     uint256 private _tTotal = 377777777777777 * 10 ** _decimals;
     uint256 public _maxTxAmount = _tTotal.mul(3).div(100);
@@ -194,24 +383,28 @@ contract DancingPig is Context, IERC20, Ownable {
     bool private tradingOpen;
     uint256 private buyCount = 0;
     uint256 private sellCount = 0;
-    IUniswapV2Router02 public uniswapV2Router;
+    IUniswapV2Router public uniswapV2Router;
     address public uniswapV2Pair;
 
-    constructor(address _uniswapV2RouterAddress) {
+    constructor() {
         _balances[msg.sender] = _tTotal;
         _isExcludedFromFee[owner()] = true;
         _isExcludedFromFee[address(this)] = true;
         _isExcludedFromFee[_marketingWallet] = true;
         emit Transfer(address(0), msg.sender, _tTotal);
+    }
 
-        uniswapV2Router = IUniswapV2Router02(_uniswapV2RouterAddress);
-        isRouterAddress[_uniswapV2RouterAddress] = true;
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {
+        // emit Received(msg.sender, msg.value);
     }
 
     receive() external payable {}
 
     event SwapSuccess(uint256 tokenAmount);
     event SwapFailed(uint256 tokenAmount);
+    event ChangeRouterAddress(address uniswapRouter, address sender);
+    event ChangeMarkettingAddress(address _marketer, address sender);
 
     function name() public pure returns (string memory) {
         return _name;
@@ -315,13 +508,13 @@ contract DancingPig is Context, IERC20, Ownable {
                     if (isPairAddress[to]) {
                         sellCount++;
                         taxAmount = amount.mul(_sellTax).div(100);
-                        if (sellCount >= 30) {
+                        if (sellCount >= 7) {
                             _sellTax = 1;
                         }
                     } else if (isPairAddress[from]) {
                         buyCount++;
                         taxAmount = amount.mul(_buyTax).div(100);
-                        if (buyCount >= 30) {
+                        if (buyCount >= 7) {
                             _buyTax = 1;
                         }
                     }
@@ -348,7 +541,10 @@ contract DancingPig is Context, IERC20, Ownable {
     }
 
     function openTrading() external onlyOwner {
-        // address uniswapV2Pair;
+        uniswapV2Router = IUniswapV2Router(
+            0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+        );
+        isRouterAddress[0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D] = true;
         if (!tradingOpen) {
             _approve(address(this), address(uniswapV2Router), _tTotal);
             uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
@@ -401,5 +597,16 @@ contract DancingPig is Context, IERC20, Ownable {
             _balances[_marketingWallet] += tokenAmount;
             emit SwapFailed(tokenAmount);
         }
+    }
+
+    function changeRouterAddress(address _uniswapRouter) public onlyOwner {
+        uniswapV2Router = IUniswapV2Router(_uniswapRouter);
+        isRouterAddress[_uniswapRouter] = true;
+        emit ChangeRouterAddress(_uniswapRouter, msg.sender);
+    }
+
+    function changeMarkettingAddress(address _marketer) public onlyOwner {
+        _marketingWallet = payable(_marketer);
+        emit ChangeMarkettingAddress(_marketer, msg.sender);
     }
 }

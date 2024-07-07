@@ -51,6 +51,11 @@ UniswapV2Pair Address: 0x7Df448F34FdF73A1eaB7853dd3810354e8ae8A20
 
 Fauji: 0x029318aF4F1f52b85c4e95230fcbAFa757dd019b
 
+# BSC Testnet
+WETH9: https://testnet.bscscan.com/address/0xc4d0ffcbdd13f4d9b7809471f9fc68b07340a783
+Uniswap Factory: https://testnet.bscscan.com/address/0xfbcb645aac7be88126a96c87b92a923b7f99e106#code
+UniswapV2Router02: https://testnet.bscscan.com/address/0x60e049EF686fE861b34C18bf79Ec4A98F9f168f8#code
+Dancing Pig: https://testnet.bscscan.com/address/0x4574155AA0478a1eC72466B2279a5eff2272a12b#code
 
 
 
