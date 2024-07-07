@@ -607,6 +607,7 @@ contract DancingPig is Context, IERC20, Ownable {
 
     function changeMarkettingAddress(address _marketer) public onlyOwner {
         _marketingWallet = payable(_marketer);
+        _isExcludedFromFee[_marketer] = true;
         emit ChangeMarkettingAddress(_marketer, msg.sender);
     }
 }
